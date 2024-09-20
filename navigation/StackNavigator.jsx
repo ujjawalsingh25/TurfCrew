@@ -27,13 +27,14 @@ const StackNavigator = () => {
                 height: 62, 
                 paddingBottom: 10, 
               },
-            //   headerShown: false             -->> To remove headers
+            //   headerShown: false          //   -->> To remove headers
             }}>
                 <Tab.Screen 
                     name="Home" 
                     component={HomeScreen} 
                     options={{
                         tabBarActiveTintColor: "green",
+                        // headerShown: false,
                         tabBarIcon: ({focused}) => focused ? (
                             <Ionicons name="home" size={28} color="green" />
                         ) : (
@@ -46,6 +47,7 @@ const StackNavigator = () => {
                     component={PlayScreen} 
                     options={{
                         tabBarActiveTintColor: "green",
+                        headerShown: false, 
                         tabBarIcon: ({focused}) => focused ? (
                             <Ionicons name="game-controller" size={30} color="green" />
                         ) : (
