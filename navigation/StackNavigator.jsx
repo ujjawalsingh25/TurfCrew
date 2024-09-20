@@ -47,7 +47,8 @@ const StackNavigator = () => {
                     component={PlayScreen} 
                     options={{
                         tabBarActiveTintColor: "green",
-                        headerShown: false, 
+                        // headerShown: false, 
+                        // headerStyle: { backgroundColor: '#223536', },
                         tabBarIcon: ({focused}) => focused ? (
                             <Ionicons name="game-controller" size={30} color="green" />
                         ) : (
