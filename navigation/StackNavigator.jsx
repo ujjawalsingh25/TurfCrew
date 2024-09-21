@@ -9,6 +9,7 @@ import HomeScreen from '../screens/HomeScreen';
 import PlayScreen from '../screens/PlayScreen';
 import BookScreen from '../screens/BookScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import TurfsInfoScreen from '../screens/TurfsInfoScreen';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -98,6 +99,12 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name="Main" 
                     component={BottomTabs} 
+                    options={{headerShown: false }}
+                />
+
+                <Stack.Screen 
+                    name="Turfs" 
+                    component={TurfsInfoScreen} 
                     options={{headerShown: false }}
                 />
             </Stack.Navigator>

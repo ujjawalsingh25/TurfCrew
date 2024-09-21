@@ -1,7 +1,8 @@
 import React, { useLayoutEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image, Pressable, ImageBackground } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, Text, View, ScrollView, Image, Pressable, ImageBackground } from 'react-native'
 
+import spotlight from '../api/spot-light';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -38,37 +39,6 @@ const HomeScreen = () => {
       )
     })
   }, [])
-
-  const data = [
-    {
-      id: '1',
-      image:
-        'https://playov2.gumlet.io/v3_homescreen/marketing_journey/Tennis%20Spotlight.png',
-      text: 'Learn Tennis',
-      description: 'Know more',
-    },
-    {
-      id: '2',
-      image:
-        'https://playov2.gumlet.io/v3_homescreen/marketing_journey/playo_spotlight_08.png',
-      text: 'Up Your Game',
-      description: 'Find a coach',
-    },
-    {
-      id: '3',
-      image:
-        'https://playov2.gumlet.io/v3_homescreen/marketing_journey/playo_spotlight_03.png',
-      text: 'Hacks to win',
-      description: 'Yes, Please!',
-    },
-    {
-      id: '4',
-      image:
-        'https://playov2.gumlet.io/v3_homescreen/marketing_journey/playo_spotlight_02.png',
-      text: 'Spotify Playolist',
-      description: 'Show more',
-    },
-  ];
 
   return (
     <ScrollView style={styles.container} >
@@ -177,8 +147,9 @@ const HomeScreen = () => {
           <View style={{padding: 10, backgroundColor: "white", borderRadius: 10}}>
             <Text style={{fontSize: 15, fontWeight: 500}}>SpotLight</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {data?.map((item ,index) => (
+              {spotlight?.map((item ,index) => (
                 <ImageBackground 
+                  key={item.id}
                   style={styles.imgBg} 
                   imageStyle={{borderRadius: 10}}
                   source={{uri: item?.image }} 
