@@ -10,3 +10,16 @@
 //  npm install @react-navigation/native-stack                               |
 //  npm install @react-navigation/bottom-tabs                                |
 // __________________________________________________________________________|
+
+
+
+// _____________  BACKEND  ____________________
+//  npm i cors                                 |
+//  npm i express                              |
+//  npm i jsonwebtoken                         |
+//  npm i moment                               |
+//  npm i mongoose                             |
+//  npm i nodemon                              |
+//  npm i nodemailer                           |
+//  npm i body-parser                          |
+// ____________________________________________|

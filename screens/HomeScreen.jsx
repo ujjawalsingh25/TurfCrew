@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { StyleSheet, Text, View, ScrollView, Image, Pressable, ImageBackground } from 'react-native'
 
-import spotlight from '../api/spot-light';
+import spotlight from '../api/data/spot-light';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';

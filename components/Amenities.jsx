@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import services from "../api/services";
+import services from "../api/data/services";
 
 const Amenities = () => {
   

@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FlatList, Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
 
 import VenueCard from '../components/VenueCard';
-import groundData from "../api/turf-grounds"
+import groundData from "../api/data/turf-grounds"
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';

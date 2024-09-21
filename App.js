@@ -8,6 +8,8 @@ export default function App() {
   );
 }
 
+// mongodb+srv://ujjawal:<db_password>@cluster0.wciqd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
