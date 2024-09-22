@@ -8,7 +8,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from '../screens/HomeScreen';
 import PlayScreen from '../screens/PlayScreen';
 import BookScreen from '../screens/BookScreen';
+import NameScreen from '../screens/NameScreen';
+import SelectImage from '../screens/SelectImage';
+import StartScreen from '../screens/StartScreen';
+import LoginScreen from '../screens/LoginScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import PasswordScreen from '../screens/PasswordScreen';
+import PrefinalScreen from '../screens/PrefinalScreen';
 import TurfsInfoScreen from '../screens/TurfsInfoScreen';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -88,7 +95,41 @@ const StackNavigator = () => {
     const AuthStack = () => {
         return (
             <Stack.Navigator>
-
+                <Stack.Screen 
+                    name='Start' 
+                    component={StartScreen} 
+                    options={{headerShown: false}}    
+                />
+                <Stack.Screen 
+                    name='Login' 
+                    component={LoginScreen} 
+                    options={{headerShown: false}}    
+                />
+                <Stack.Screen 
+                    name='Register' 
+                    component={RegisterScreen} 
+                    options={{headerShown: false}}    
+                />
+                <Stack.Screen 
+                    name='Password' 
+                    component={PasswordScreen} 
+                    options={{headerShown: false}}    
+                />
+                <Stack.Screen 
+                    name='Name' 
+                    component={NameScreen} 
+                    options={{headerShown: false}}    
+                />
+                <Stack.Screen 
+                    name='Image' 
+                    component={SelectImage} 
+                    options={{headerShown: false}}    
+                />
+                <Stack.Screen 
+                    name='PreFinal' 
+                    component={PrefinalScreen} 
+                    options={{headerShown: false}}    
+                />
             </Stack.Navigator>
         )
     }
@@ -113,7 +154,8 @@ const StackNavigator = () => {
 
   return (
     <NavigationContainer>
-        <MainStack />
+        {/* <MainStack /> */}
+        <AuthStack />
     </NavigationContainer>
   )
 }

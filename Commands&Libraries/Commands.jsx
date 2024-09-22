@@ -11,6 +11,8 @@
 //  npm install @react-navigation/bottom-tabs                                |
 // __________________________________________________________________________|
 
+// npm i react-native-maps
+
 
 
 // _____________  BACKEND  ____________________
