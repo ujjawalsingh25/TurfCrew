@@ -13,6 +13,9 @@
 
 // npm i react-native-maps
 
+// npm i core-js
+// npm i jwt-decode
+
 
 
 // _____________  BACKEND  ____________________

@@ -108,12 +108,12 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name='Register' 
                     component={RegisterScreen} 
-                    options={{headerShown: false}}    
+                    // options={{headerShown: false}}    
                 />
                 <Stack.Screen 
                     name='Password' 
                     component={PasswordScreen} 
-                    options={{headerShown: false}}    
+                    // options={{headerShown: false}}    
                 />
                 <Stack.Screen 
                     name='Name' 
@@ -128,7 +128,7 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name='PreFinal' 
                     component={PrefinalScreen} 
-                    options={{headerShown: false}}    
+                    // options={{headerShown: false}}    
                 />
             </Stack.Navigator>
         )
