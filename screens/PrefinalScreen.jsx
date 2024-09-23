@@ -1,13 +1,80 @@
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { AuthContext } from '../AuthContext';
+import { getRegistrationProgress } from '../registration-utils';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const PrefinalScreen = () => {
   const navigation = useNavigation();
+  const {token, setToken} = useContext(AuthContext);
+  const [userData, setUserData] = useState();
 
+  useEffect(() => {
+    if (token) {
+      navigation.replace('MainStack', {screen: 'Main'});
+    }
+  }, [token]);
+
+  useEffect(() => {
+    getAllScreenData();
+  }, []);
+
+  const getAllScreenData = async () => {
+    try {
+      const screens = ['Register', 'Password', 'Name', 'Image']
+      let userData = {};
+
+      for(const screenName of screens) {
+        const screenData = await getRegistrationProgress(screenName);
+        if(screenData) {
+          userData = {...userData, ...screenData}
+        }
+      }
+      
+      setUserData(userData);
+    } catch (error) {
+      console.log("Error", error);
+    }
+  }
+  console.log("User: ", userData);
+
+  const clearAllScreenData = async () => {
+    try {
+      const screens = ['Register', 'Password', 'Name', 'Image'];
+      for (const screenName of screens) {
+        const key = `registration_progress_${screenName}`;
+        await AsyncStorage.removeItem(key);
+      }
+      console.log('All Screen data cleared!');
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }
+
+  const registerUser = async () => {
+    try {
+      const response = await axios
+      .post("http://192.168.237.220:8000/register", userData)
+      .then(response => {
+        console.log(response);
+        const token = response.data.token;
+        AsyncStorage.setItem("token", token);
+        setToken(token);
+      });
+      console.log("Res",response);
+      
+      clearAllScreenData();
+    } catch (error) {
+      console.log("ErrorA", error);
+    }
+  };
+  
+  
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -49,7 +116,7 @@ const PrefinalScreen = () => {
       />
 
       <Pressable
-        // onPress={registerUser}
+        onPress={registerUser}
         style={styles.nextBtn}
       >
         <Text style={styles.nextText}> Finish Registering </Text>

@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { StyleSheet } from 'react-native'
+import { AuthContext } from '../AuthContext';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -27,6 +28,8 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
     const Tab = createBottomTabNavigator();
+
+    const { token } = useContext(AuthContext);
 
     function BottomTabs() {
         return (
@@ -154,8 +157,7 @@ const StackNavigator = () => {
 
   return (
     <NavigationContainer>
-        {/* <MainStack /> */}
-        <AuthStack />
+        {token === null || token === '' ? <AuthStack /> :  <MainStack /> }
     </NavigationContainer>
   )
 }

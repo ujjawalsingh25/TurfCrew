@@ -56,8 +56,8 @@ const StartScreen = () => {
         initialRegion={{
           latitude: 25.5938,
           longitude: 85.1605,
-          latitudeDelta: 0.198,
-          longitudeDelta: 0.198,
+          latitudeDelta: 0.198,    // Adjusted to reflect a radius of ~15 km
+          longitudeDelta: 0.198,  // Adjusted to maintain aspect ratio
         }}>
 
           {/* {circularPoints?.map((point, index) => {
