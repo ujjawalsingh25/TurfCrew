@@ -1,58 +1,101 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { useNavigation } from '@react-navigation/native';
+import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+
+import { getRegistrationProgress, saveRegistrationProgress } from '../registration-utils';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
 
 const NameScreen = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const navigation = useNavigation();
 
+  useEffect(() => {
+    getRegistrationProgress('Name').then(progressData => {
+      if (progressData) {
+        setFirstName(progressData.firstName || '');
+        setLastName(progressData.lastName || '');
+      }
+    });
+  }, [])
+
   const saveName = () => {
+    if(firstName.trim() !== '') {
+      saveRegistrationProgress('Name', {firstName, lastName});
+    }
     navigation.navigate('Image');
   }
 
-  return (
-    <>
-      <SafeAreaView style={styles.detailsContainer}>
-        <View style={styles.iconBack}>
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "",
+      headerLeft: () => (
+        <View>
+          <Image
+            source={require('../public/title-logo.png')}
+            style={{ height: 25, width: 220, marginLeft: 10 }}
+          />
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{marginHorizontal: 20}}>
         <Ionicons
               onPress={() => navigation.goBack()}
               name="arrow-back"
-              size={24}
+              size={35}
               color="black"
             />
         </View>
-        
-        <View style={styles.header}>
-          <Text style={styles.headerText}>
-            Complete your Profile
-          </Text>
-          <Text style={styles.subHeaderTxt}>
-            What would you like your mates to call you? ❤️
-          </Text>
-        </View>
+      )
+    });
+  }, []);
 
-        <View style={styles.nameContainer}>
-          <View>
-            <Text style={styles.nameTxt}>First Name *</Text>
-            <TextInput 
-              value={firstName}
-              onChangeText={setFirstName}
-              style={styles.firstNameInput}
+  return (
+    <>
+      <ScrollView style={{backgroundColor: "white"}}>
+        <SafeAreaView style={styles.detailsContainer}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              Complete your Profile
+            </Text>
+            <Text style={styles.subHeaderTxt}>
+              What would you like your mates to call you? 
+            </Text>
+          </View>
+
+          <View style={styles.nameContainer}>
+            <View>
+              <Text style={styles.nameTxt}>First Name *</Text>
+              <TextInput 
+                value={firstName}
+                onChangeText={setFirstName}
+                style={styles.firstNameInput}
+              />
+            </View>
+            <View>
+              <Text style={styles.nameTxt}>Last Name</Text>
+              <TextInput 
+                value={lastName}
+                onChangeText={setLastName}
+                style={styles.lastNameInput}
+              />
+            </View>
+            <View>
+              <Text style={styles.nameTxt}>Age</Text>
+              <TextInput 
+                placeholder='Should be greater than 8'
+                style={styles.lastNameInput}
+              />
+            </View>
+
+            <Image 
+              source={require('../public/animations/hello.gif')}
+              style={styles.helloAnimation}
             />
           </View>
-          <View>
-            <Text style={styles.nameTxt}>Last Name</Text>
-            <TextInput 
-              value={lastName}
-              onChangeText={setLastName}
-              style={styles.lastNameInput}
-            />
-          </View>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </ScrollView>
 
       <Pressable 
         onPress={saveName}
@@ -69,21 +112,18 @@ export default NameScreen
 const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1, 
-    backgroundColor: 'white', 
-    marginTop: 45
-  },
-  iconBack: {
-    marginHorizontal: 10
+    backgroundColor: 'white',
   },
   header: {
     marginHorizontal: 10, 
     marginVertical: 15
   },
   headerText: {
-    fontSize: 20, 
+    fontSize: 25, 
     fontWeight: 'bold'
   },
   subHeaderTxt: {
+    fontSize: 17,
     marginTop: 10, 
     color: 'gray'
   },
@@ -125,5 +165,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: '500',
+  },
+  helloAnimation: { 
+    height: 200, 
+    width: 200, 
+    // marginTop: 20, 
+    marginLeft: "auto", 
+    marginRight: "auto" 
   },
 })

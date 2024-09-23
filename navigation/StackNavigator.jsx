@@ -118,12 +118,12 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name='Name' 
                     component={NameScreen} 
-                    options={{headerShown: false}}    
+                    // options={{headerShown: false}}    
                 />
                 <Stack.Screen 
                     name='Image' 
                     component={SelectImage} 
-                    options={{headerShown: false}}    
+                    // options={{headerShown: false}}    
                 />
                 <Stack.Screen 
                     name='PreFinal' 

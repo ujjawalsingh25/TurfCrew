@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
+
+import { getRegistrationProgress, saveRegistrationProgress } from '../registration-utils';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -8,7 +10,18 @@ const SelectImage = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState();
 
+  useEffect(() => {
+    getRegistrationProgress('Image').then(progressData => {
+      if (progressData) {
+        setImage(progressData.image || '');
+      }
+    });    
+  }, [])
+
   const saveImage = () => {
+    if(image.trim() !== '') {
+      saveRegistrationProgress('Image', {image});
+    }
     navigation.navigate("PreFinal");
   }
 
@@ -39,10 +52,19 @@ const SelectImage = () => {
     },
   ];
 
-  return (
-    <>
-      <SafeAreaView style={styles.detailsContainer}>
-        <View style={styles.iconBack}>
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "",
+      headerLeft: () => (
+        <View>
+          <Image
+            source={require('../public/title-logo.png')}
+            style={{ height: 25, width: 220, marginLeft: 10 }}
+          />
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{marginHorizontal: 20}}>
         <Ionicons
               onPress={() => navigation.goBack()}
               name="arrow-back"
@@ -50,13 +72,20 @@ const SelectImage = () => {
               color="black"
             />
         </View>
+      )
+    });
+  }, []);
+
+  return (
+    <>
+      <SafeAreaView style={styles.detailsContainer}>
         <View style={styles.header}>
           <Text style={styles.headerText}>
             Complete Your Profile
           </Text>
 
           <Text style={styles.subHeaderTxt}>
-            What would you like your mates to call you? ❤️
+            What would you like your mates to see you? 
           </Text>
         </View>
 
@@ -121,20 +150,17 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1, 
     backgroundColor: 'white', 
-    marginTop: 45
-  },
-  iconBack: {
-    marginHorizontal: 10
   },
   header: {
     marginHorizontal: 10, 
     marginVertical: 15
   },
   headerText: {
-    fontSize: 20, 
+    fontSize: 25, 
     fontWeight: 'bold'
   },
   subHeaderTxt: {
+    fontSize: 17,
     marginTop: 10, 
     color: 'gray'
   },

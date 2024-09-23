@@ -43,6 +43,11 @@ const PrefinalScreen = () => {
         </Text>
       </View>
 
+      <Image 
+        source={require('../public/animations/Finish.gif')}
+        style={styles.finishAnimation}
+      />
+
       <Pressable
         // onPress={registerUser}
         style={styles.nextBtn}
@@ -71,6 +76,13 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginTop: 10,
     marginRight: 50,
+  },
+  finishAnimation: { 
+    height: 300, 
+    width: 300, 
+    marginTop: 50, 
+    marginLeft: "auto", 
+    marginRight: "auto" 
   },
   nextBtn: {
     backgroundColor: '#6495ED',
