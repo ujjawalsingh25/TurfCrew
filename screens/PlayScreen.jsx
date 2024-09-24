@@ -10,6 +10,7 @@ const PlayScreen = () => {
   const [sport, setSport] = useState("Cricket");
 
   const navigation = useNavigation(); 
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -144,7 +145,7 @@ const PlayScreen = () => {
       </View>
 
       <View style={styles.actionBar}>
-        <Pressable>
+        <Pressable onPress={() => navigation.navigate('Create')}>
           <Text style={{fontWeight: "bold"}}>Create Game</Text>
         </Pressable>
         <View style={styles.actionFunc}>

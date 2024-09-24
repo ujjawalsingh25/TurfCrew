@@ -24,6 +24,7 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import CreateActivity from '../screens/CreateActivity';
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -150,6 +151,12 @@ const StackNavigator = () => {
                     name="Turfs" 
                     component={TurfsInfoScreen} 
                     options={{headerShown: false }}
+                />
+
+                <Stack.Screen 
+                    name="Create" 
+                    component={CreateActivity} 
+                    // options={{headerShown: false }}
                 />
             </Stack.Navigator>
         )
