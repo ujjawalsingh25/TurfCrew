@@ -17,7 +17,10 @@
 // npm i jwt-decode
 // npm i axios
 
-
+//  npm i react-native-modals
+// npm i moment
+// npm i @react-native-community/datetimepicker
+// npm i react-native-modal-datetime-picker
 
 // _____________  BACKEND  ____________________
 //  npm i cors                                 |

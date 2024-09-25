@@ -1,7 +1,24 @@
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Platform, Alert } from 'react-native'
+import { 
+    Image, 
+    Pressable, 
+    SafeAreaView, 
+    ScrollView, 
+    StyleSheet, 
+    Text, 
+    TextInput, 
+    View, 
+    Platform, 
+    Alert, 
+} from 'react-native'
+import axios from 'axios';
+import moment from 'moment';
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-
 import { useNavigation, useRoute } from '@react-navigation/native';
+
+import {SlideAnimation} from 'react-native-modals';
+import {BottomModal} from 'react-native-modals';
+import {ModalContent} from 'react-native-modals';
+import { AuthContext } from '../AuthContext';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -20,11 +37,43 @@ const CreateActivity = () => {
     const [area, setArea] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
+
     const [noOfPlayers, setnoOfPlayers] = useState(0);
     const [timeInterval, setTimeInterval] = useState("");
     const [taggedVenue, setTaggedVenue] = useState(null);
-    
-  const [selected, setSelected] = useState(["Public"]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selected, setSelected] = useState(["Public"]);
+
+    const generateDates = () => {
+        const dates = [];
+        for (let i = 0; i < 9; i++) {
+          const date = moment().add(i, 'days');
+          let displayDate;
+          if (i === 0) {
+            displayDate = 'Today';
+          } else if (i === 1) {
+            displayDate = 'Tomorrow';
+          } else if (i === 2) {
+            displayDate = 'Day after';
+          } else {
+            displayDate = date.format('Do MMMM');
+          }
+          dates.push({
+            id: i.toString(),
+            displayDate,
+            dayOfWeek: date.format('dddd'),
+            actualDate: date.format('Do MMMM'),
+          });
+        }
+        return dates;
+    };
+    const dates = generateDates();
+    // console.log('Dates', dates);
+
+    const selectDate = date => {
+        setModalVisible(false);
+        setDate(date);
+    };
 
     useEffect(() => {
         // console.log('Turf Tagged');
@@ -34,6 +83,13 @@ const CreateActivity = () => {
     }, [route?.params]);
     console.log('tagged', route?.params?.taggedVenue);
 
+    useEffect(() => {
+        if (route?.params?.timeInterval) {
+          setTimeInterval(route?.params?.timeInterval);
+        }
+    }, [route.params]);
+    console.log(timeInterval); 
+      
     useLayoutEffect(() => {
         navigation.setOptions({
         headerTitle: "",
@@ -42,9 +98,9 @@ const CreateActivity = () => {
             <View style={styles.topHeader}>
                 <Text style={styles.topHeaderTxt}>Create Activity</Text>
                 <Ionicons
-                onPress={() => navigation.goBack()}
-                name="arrow-back" size={35} color="white"
-            />
+                    onPress={() => navigation.goBack()}
+                    name="arrow-back" size={35} color="white"
+                />
             </View>
         ),});
     }, [])
@@ -94,11 +150,14 @@ const CreateActivity = () => {
                     <Text style={styles.break}/>
 
                     <Pressable
-                        //   onPress={() => setModalVisible(!modalVisible)}
                         style={styles.formContainer}
+                        onPress={() => setModalVisible(!modalVisible)}
                     >
                         <Feather name="calendar" size={30} color="gray" />
-                        <Pressable style={styles.form}>
+                        <Pressable 
+                            style={styles.form}    
+                            onPress={() => setModalVisible(!modalVisible)}
+                        >
                             <Text style={styles.formHeader}>Date</Text>
                             <TextInput
                                 editable={false}
@@ -112,18 +171,21 @@ const CreateActivity = () => {
                     <Text style={styles.break}/>
 
                     <Pressable
-                        // onPress={() => navigation.navigate('Time')}
+                        onPress={() => navigation.navigate('Time')}
                         style={styles.formContainer}
                     >
                         <AntDesign name="clockcircleo" size={30} color="gray" />
-                        <View style={styles.form}>
+                        <Pressable 
+                            style={styles.form}
+                            onPress={() => navigation.navigate('Time')}
+                        >
                             <Text style={styles.formHeader}>Time</Text>
                             <TextInput
-                                placeholderTextColor={timeInterval ? 'black' : 'gray'}
                                 style={styles.formInput}
+                                placeholderTextColor={timeInterval ? 'black' : 'gray'}
                                 placeholder={timeInterval ? timeInterval : 'Pick Exact Time'}
                             />
-                        </View>
+                        </Pressable>
                         <AntDesign name="arrowright" size={30} color="gray" />
                     </Pressable>
                     <Text style={styles.break}/>
@@ -241,6 +303,37 @@ const CreateActivity = () => {
         <Text style={styles.createTxt}> Create Activity</Text>
       </Pressable>
 
+        <BottomModal
+            onBackdropPress={() => setModalVisible(!modalVisible)}
+            swipeDirection={['up', 'down']}
+            swipeThreshold={200}
+            modalAnimation={
+            new SlideAnimation({
+                slideFrom: 'bottom',
+            })
+            }
+            onHardwareBackPress={() => setModalVisible(!modalVisible)}
+            visible={modalVisible}
+            onTouchOutside={() => setModalVisible(!modalVisible)}
+        >
+            <ModalContent style={styles.rehostContainer}>
+                <View>
+                <Text style={styles.rehostTxt}> Choose date/ time to rehost </Text>
+                <View style={styles.hostDate}>
+                    {dates?.map((item, index) => (
+                        <Pressable
+                            key={index}
+                            onPress={() => selectDate(item?.actualDate)}
+                            style={styles.dateBtn}
+                        >
+                            <Text>{item?.displayDate}</Text>
+                            <Text style={styles.dayOfWeek}>{item?.dayOfWeek} </Text>
+                        </Pressable>
+                    ))}
+                </View>
+                </View>
+            </ModalContent>
+        </BottomModal>
     </>
   )
 }
@@ -277,6 +370,7 @@ const styles = StyleSheet.create({
         height: 1
     },
     formContainer: {
+        // backgroundColor: "green",
         flexDirection: 'row',
         alignItems: 'center',
         gap: 20,
@@ -398,5 +492,35 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         fontWeight: '500',
+    },
+    rehostContainer: {
+        backgroundColor: 'white',
+        height: 400, 
+        width: '100%', 
+    },
+    rehostTxt: {
+        textAlign: 'center', 
+        fontSize: 16, 
+        fontWeight: 'bold',
+    },
+    hostDate: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 15,
+        flexWrap: 'wrap',
+        marginVertical: 20,
+    },    
+    dateBtn: {
+        padding: 10,
+        borderRadius: 10,
+        borderColor: '#E0E0E0',
+        borderWidth: 1,
+        width: '30%',
+        justifyContent: 'center',
+        alignItems: 'center',
+  },
+    dayOfWeek: {
+        color: 'gray', 
+        marginTop: 8
     },
 })

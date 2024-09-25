@@ -26,6 +26,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import CreateActivity from '../screens/CreateActivity';
 import TagVenueScreen from '../screens/TagVenueScreen';
+import SelectTimeScreen from '../screens/SelectTimeScreen';
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -147,22 +148,24 @@ const StackNavigator = () => {
                     component={BottomTabs} 
                     options={{headerShown: false }}
                 />
-
                 <Stack.Screen 
                     name="Turfs" 
                     component={TurfsInfoScreen} 
                     options={{headerShown: false }}
                 />
-
                 <Stack.Screen 
                     name="Create" 
                     component={CreateActivity} 
                     // options={{headerShown: false }}
                 />
-
                 <Stack.Screen 
                     name="TagVenue" 
                     component={TagVenueScreen} 
+                    // options={{headerShown: false }}
+                />
+                <Stack.Screen 
+                    name="Time" 
+                    component={SelectTimeScreen} 
                     // options={{headerShown: false }}
                 />
             </Stack.Navigator>
