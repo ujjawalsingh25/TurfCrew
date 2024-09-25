@@ -25,6 +25,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import CreateActivity from '../screens/CreateActivity';
+import TagVenueScreen from '../screens/TagVenueScreen';
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -156,6 +157,12 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name="Create" 
                     component={CreateActivity} 
+                    // options={{headerShown: false }}
+                />
+
+                <Stack.Screen 
+                    name="TagVenue" 
+                    component={TagVenueScreen} 
                     // options={{headerShown: false }}
                 />
             </Stack.Navigator>

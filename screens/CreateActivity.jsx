@@ -1,7 +1,7 @@
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Platform, Alert } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -13,39 +13,40 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const CreateActivity = () => {
+    const route = useRoute();
     const navigation = useNavigation();
+
     const [sport, setSport] = useState("");
     const [area, setArea] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [noOfPlayers, setnoOfPlayers] = useState(0);
     const [timeInterval, setTimeInterval] = useState("");
+    const [taggedVenue, setTaggedVenue] = useState(null);
     
   const [selected, setSelected] = useState(["Public"]);
+
+    useEffect(() => {
+        // console.log('Turf Tagged');
+        if (route?.params?.taggedVenue) {
+        setTaggedVenue(route?.params?.taggedVenue);
+        }
+    }, [route?.params]);
+    console.log('tagged', route?.params?.taggedVenue);
 
     useLayoutEffect(() => {
         navigation.setOptions({
         headerTitle: "",
+        headerStyle: { backgroundColor: '#294461' },
         headerLeft: () => (
-            <View style={styles.logoContainer}>
-            <Image 
-                source={require('../public/title-logo.png')}
-                style={{ height:25, width: 220, marginLeft: 10}}
-            />
-            <MaterialIcons name="keyboard-arrow-down" size={30} color="black" />
-            </View>
-        ),
-        headerRight: () => (
-            <View style={{marginHorizontal: 20}}>
-            <Ionicons
+            <View style={styles.topHeader}>
+                <Text style={styles.topHeaderTxt}>Create Activity</Text>
+                <Ionicons
                 onPress={() => navigation.goBack()}
-                name="arrow-back"
-                size={35}
-                color="black"
-                />
+                name="arrow-back" size={35} color="white"
+            />
             </View>
-        )
-        });
+        ),});
     }, [])
 
 
@@ -54,11 +55,9 @@ const CreateActivity = () => {
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.header}>
-                    <Text style={styles.headerTxt}>Create Activity</Text>
-
                     <Pressable
                         // onPress={() => navigation.navigate('Sport')}
-                        style={[styles.formContainer, {marginTop: 15}]}
+                        style={[styles.formContainer]}
                     >
                         <MaterialCommunityIcons name="whistle" size={30} color="gray" />
                         <View style={styles.form}>
@@ -76,19 +75,18 @@ const CreateActivity = () => {
                     <Text style={styles.break}/>
 
                     <Pressable
-                        //   onPress={() => navigation.navigate('TagVenue')}
+                        onPress={() => navigation.navigate('TagVenue')}
                         style={styles.formContainer}
                     >
                         <Entypo name="location" size={30} color="gray" />
                         <View style={styles.form}>
                             <Text style={styles.formHeader}>Area</Text>
                             <TextInput
-                            //   value={area ? area : taggedVenue}
-                            value={area}
-                            onChangeText={setArea}
-                            placeholderTextColor="gray"
-                            style={styles.formInput}
-                            placeholder={'Locality or venue name'}
+                              value={area ? area : taggedVenue}
+                              onChangeText={setArea}
+                              placeholderTextColor="gray"
+                              style={styles.formInput}
+                              placeholder={'Locality or venue name'}
                             />
                         </View>
                         <AntDesign name="arrowright" size={30} color="gray" />
@@ -250,21 +248,15 @@ const CreateActivity = () => {
 export default CreateActivity;
 
 const styles = StyleSheet.create({
-    logoContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 5,
+    topHeader: {
+        flexDirection:"row-reverse", 
+        gap: 30, 
+        marginHorizontal: 12
     },
-    headerRt: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        margin: 15,
-    },
-    accountImg: {
-        width: 40,
-        height: 40,
-        borderRadius: 15,
+    topHeaderTxt: {
+        fontSize: 25, 
+        fontWeight: 'bold', 
+        color: 'white',
     },
     container: {
         flex: 1,

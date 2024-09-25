@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const crypto = require("crypto");
 const moment = require("moment");
 
+const venues = require("./data/venues");
+
 const app = express();
 const port = 8000;
 const cors = require("cors");
@@ -72,3 +74,31 @@ app.post('/login', async (req, res) => {
         res.status(500).json({message: 'Error loggin In'});
     }
 })
+
+async function addVenues() {
+    for (const venueData of venues) {   // Check if the venue already exists
+      const existingVenue = await Venue.findOne({name: venueData?.name});  
+      if (existingVenue) {
+        console.log(`Venue "${venueData.name}" already exists. Skipping.`);
+      } else { // Add the new venue
+        const newVenue = new Venue(venueData);
+        await newVenue.save();
+        console.log(`Venue "${venueData.name}" added successfully.`);
+      }
+    }
+}
+
+addVenues().catch(err => {
+    console.error('Error adding venues:', err);
+});
+
+app.get('/venues', async (req, res) => {
+    try {
+      const venues = await Venue.find({});
+    //   console.log("ven",venues)
+      res.status(200).json(venues);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({message: 'Failed to fetch venues'});
+    }
+});
