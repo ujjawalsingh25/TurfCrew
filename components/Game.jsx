@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 7,
         marginTop: 12,
-        alignSelf: 'flex-start', // This line ensures the width is based on the content
+        alignSelf: 'flex-start', 
     },
     levelTxt : {
         fontSize: 14, 

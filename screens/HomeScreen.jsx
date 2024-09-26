@@ -159,7 +159,7 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        <View>
+        {/* <View>
           <View style={{marginLeft: "auto", marginRight: "auto"}}>
             <Image 
               source={require('../public/logo.png')} // Corrected local image source
@@ -169,7 +169,7 @@ const HomeScreen = () => {
           <Text style={styles.logoTxt}>Your Sports Community</Text>
           <Text style={styles.logoTxt}>&copy;Ujjawal Singh</Text>
           <Text style={[styles.logoTxt, {marginBottom: 15}]}>All Rights Reserved</Text>
-        </View>
+        </View> */}
     </ScrollView>
   )
 }

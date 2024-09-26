@@ -181,3 +181,45 @@ app.get('/games', async (req, res) => {
       res.status(500).json({message: 'Failed to fetch games'});
     }
 });
+
+app.get('/upcoming', async (req, res) => {
+  try {
+    const userId = req.query.userId; // Assuming you have user authentication and req.user contains the authenticated user's info
+    console.log('userId', userId);
+
+    const games = await Game.find({     // Fetch games where the user is either the admin or a player
+      $or: [
+        {admin: userId},         // Check if the user is the admin
+        {players: userId},      // Check if the user is in the players list
+      ],
+    }).populate('admin')
+      .populate('players', 'image firstName lastName');
+
+    const formattedGames = games.map(game => ({   // Format games with the necessary details
+      _id: game._id,
+      sport: game.sport,
+      date: game.date,
+      time: game.time,
+      area: game.area,
+      players: game.players.map(player => ({
+        _id: player._id,
+        imageUrl: player.image,                                  // Player's image URL
+        name: `${player.firstName} ${player.lastName}`,         // Optional: Player's name
+      })),
+      totalPlayers: game.totalPlayers,
+      queries: game.queries,
+      requests: game.requests,
+      isBooked: game.isBooked,
+      courtNumber: game.courtNumber,
+      adminName: `${game.admin.firstName} ${game.admin.lastName}`,
+      adminUrl: game.admin.image,                           // Assuming the URL is stored in the image field
+      isUserAdmin: game.admin._id.toString() === userId,
+      matchFull:game.matchFull
+    }));
+
+    res.json(formattedGames);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: 'Failed to fetch upcoming games'});
+  }
+});

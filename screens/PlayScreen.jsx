@@ -1,19 +1,24 @@
 import axios from 'axios';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import Game from '../components/Game';
+import { AuthContext } from '../AuthContext';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import UpComingGame from '../components/UpcomingGame';
 
 const PlayScreen = () => {
   const navigation = useNavigation(); 
+  const { userId } = useContext(AuthContext);
   const [option, setOptions] = useState("My Sports");
   const [sport, setSport] = useState("Cricket");
   const [games, setGames] = useState([]);
-  
+  const [user, setUser] = useState("");
+  const [upcomingGames, setUpcomingGames] = useState([]);
+
 
   useEffect(() => {
     fetchGames();
@@ -28,6 +33,26 @@ const PlayScreen = () => {
       console.error('Failed to fetch games:', error);
     }
   };
+
+  useEffect(() => {
+    if (userId) {
+      fetchUpcomingGames();
+    }
+  }, [userId]);
+  
+  const fetchUpcomingGames = async () => {
+    try {
+      console.log('userId', userId);
+      const response = await axios.get(
+        `http://192.168.237.220:8000/upcoming?userId=${userId}`,
+      );
+      setUpcomingGames(response.data);
+    } catch (error) {
+      console.error('Failed to fetch upcoming games:', error);
+    }
+  };
+  console.log("Upcoming Games: ",upcomingGames);
+
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -162,6 +187,15 @@ const PlayScreen = () => {
           keyExtractor={item => item._id}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => <Game item={item} />}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      )}
+
+      {option == 'Calendar' && (
+        <FlatList
+          data={upcomingGames}
+          keyExtractor={item => item._id}
+          renderItem={({item}) => <UpComingGame item={item} />}
           contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
