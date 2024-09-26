@@ -1,15 +1,33 @@
-import React, { useLayoutEffect, useState } from 'react'
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import axios from 'axios';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import Game from '../components/Game';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
 
 const PlayScreen = () => {
   const navigation = useNavigation(); 
   const [option, setOptions] = useState("My Sports");
   const [sport, setSport] = useState("Cricket");
+  const [games, setGames] = useState([]);
+  
 
+  useEffect(() => {
+    fetchGames();
+  }, []);
+  console.log('Games', games);
+
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get('http://192.168.237.220:8000/games');
+      setGames(response.data);
+    } catch (error) {
+      console.error('Failed to fetch games:', error);
+    }
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -45,26 +63,6 @@ const PlayScreen = () => {
   return (
     <SafeAreaView>
       <View style={styles.header}>
-        {/* <View style={styles.headerContainer}>
-          <View style={styles.logoContainer}>
-            <Image 
-              source={require('../public/title-logo.png')}
-              style={{ height:25, width: 220, marginLeft: 10}}
-            />
-            <MaterialIcons name="keyboard-arrow-down" size={30} color="black" />
-          </View>
-          <View style={styles.navIcon}>
-            <Ionicons name="chatbox-outline" size={30} color="black" />
-            <Ionicons name="notifications-outline" size={30} color="black" />
-            <Image 
-              style={styles.accountImg}
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/128/4140/4140061.png"
-              }}
-            />
-          </View>
-        </View> */}
-
         <View style={styles.navContainer}>
           <Pressable onPress={() => setOptions('Calendar')}>
             <Text style={[
@@ -146,19 +144,28 @@ const PlayScreen = () => {
 
       <View style={styles.actionBar}>
         <Pressable onPress={() => navigation.navigate('Create')}>
-          <Text style={{fontWeight: "bold"}}>Create Game</Text>
+          <Text style={styles.actionTxt}>Create Game</Text>
         </Pressable>
         <View style={styles.actionFunc}>
           <Pressable>
-            <Text style={{fontWeight: "bold"}}>Filter</Text>
+            <Text style={styles.actionTxt}>Filter</Text>
           </Pressable>
           <Pressable>
-            <Text style={{fontWeight: "bold"}}>Sort</Text>
+            <Text style={styles.actionTxt}>Sort</Text>
           </Pressable>
         </View>
       </View>
 
-      
+      {option == 'My Sports' && (
+        <FlatList
+          data={games}
+          keyExtractor={item => item._id}
+          showsVerticalScrollIndicator={false}
+          renderItem={({item}) => <Game item={item} />}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      )}
+
     </SafeAreaView>
   )
 }
@@ -237,5 +244,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 15,
-  }
+  },
+  actionTxt: {
+    fontWeight: "bold", 
+    fontSize: 18,
+  },
 })
