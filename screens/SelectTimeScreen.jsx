@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Button, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -10,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const SelectTimeScreen = () => {
   const navigation = useNavigation();
   const [time, setTime] = useState('');
+  const [timeType, setTimeType] = useState('');
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [isStartTimePickerVisible, setStartTimePickerVisibility] = useState(false);
@@ -93,12 +94,17 @@ const SelectTimeScreen = () => {
         <Pressable style={styles.timeContainer}>
             {times.map((item, index) => (
                 <Pressable
-                    onPress={() => selectTime(item.type)}
+                    // onPress={() => selectTime(item.type)}
+                    key={index}
+                    onPress={() => {
+                        setTimeType(item.type);
+                        navigation.navigate('Create', { timeType: item.type });
+                    }}
                     style={styles.timeBtn}
                 >
                     {item.icon}
-                    <Text>{item.type}</Text>
-                    <Text>{item.timings}</Text>
+                    <Text style={styles.timeTxt}>{item.type}</Text>
+                    <Text style={styles.timeTxt}>{item.timings}</Text>
                 </Pressable>
             ))}
         </Pressable>
@@ -134,7 +140,14 @@ const SelectTimeScreen = () => {
                         Selected Interval: {formatTime(startTime)} - {formatTime(endTime)}
                     </Text>
                 </View>
-            )}
+            )} 
+
+            <Image 
+                // source={require('../public/animations/calender.gif')}
+                source={require('../public/animations/hourglass.gif')}
+                style={styles.timeAnimation}
+            />
+      
         </View>
     </View>
   )
@@ -175,8 +188,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 15,
+        gap: 5,
         elevation: 3,
+    },
+    timeTxt: {
+        fontSize: 18,
     },
     container2: {
         flexDirection: "column",
@@ -199,5 +215,11 @@ const styles = StyleSheet.create({
     summaryText: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    timeAnimation: { 
+        height: 180, 
+        width: 180, 
+        marginLeft: "auto", 
+        marginRight: "auto" 
     },
 })

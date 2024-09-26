@@ -102,3 +102,82 @@ app.get('/venues', async (req, res) => {
       res.status(500).json({message: 'Failed to fetch venues'});
     }
 });
+
+app.post('/creategame', async (req, res) => {
+    try {
+      const {sport, area, date, time, admin, totalPlayers} = req.body;
+  
+      const activityAccess = 'public';
+  
+      console.log('sport', sport);
+      console.log(area);
+      console.log(date);
+      console.log(admin);
+  
+      const newGame = new Game({
+        sport,
+        area,
+        date,
+        time,
+        admin,
+        totalPlayers,
+        players: [admin],
+      });
+  
+      const savedGame = await newGame.save();
+      res.status(200).json(savedGame);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({message: 'Failed to create game'});
+    }
+}); 
+
+app.get('/games', async (req, res) => {
+    try {
+      const games = await Game.find({})
+        .populate('admin')
+        .populate('players', 'image firstName lastName');
+  
+      const currentDate = moment();
+  
+      
+        const filteredGames = games.filter(game => {         // Filter games based on current date and time
+          const gameDate = moment(game.date, 'Do MMMM');      // Assuming your date is stored in "9th July" format
+          console.log('game Date', gameDate);
+          const gameTime = game.time.split(' - ')[0];          // Get the start time of the game
+          console.log('game time', gameTime);
+
+          const gameDateTime = moment(
+              `${gameDate.format('YYYY-MM-DD')} ${gameTime}`,
+              'YYYY-MM-DD h:mm A',
+          );
+          console.log('gamedateTime', gameDateTime);
+    
+          return gameDateTime.isAfter(currentDate);
+      });
+  
+      const formattedGames = filteredGames.map(game => ({
+        _id: game._id,
+        sport: game.sport,
+        date: game.date,
+        time: game.time,
+        area: game.area,
+        players: game.players.map(player => ({
+          _id: player._id,
+          imageUrl: player.image,                                // Player's image URL
+          name: `${player.firstName} ${player.lastName}`,       // Optional: Player's name
+        })),
+        totalPlayers: game.totalPlayers,
+        queries: game.queries,
+        requests: game.requests,
+        isBooked: game.isBooked,
+        adminName: `${game.admin.firstName} ${game.admin.lastName}`,
+        adminUrl: game.admin.image,                         // Assuming the URL is stored in the image field
+        matchFull: game.matchFull
+      }));
+      res.json(formattedGames);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({message: 'Failed to fetch games'});
+    }
+});

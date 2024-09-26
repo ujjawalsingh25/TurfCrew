@@ -6,10 +6,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
 const PlayScreen = () => {
+  const navigation = useNavigation(); 
   const [option, setOptions] = useState("My Sports");
   const [sport, setSport] = useState("Cricket");
 
-  const navigation = useNavigation(); 
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -157,6 +157,8 @@ const PlayScreen = () => {
           </Pressable>
         </View>
       </View>
+
+      
     </SafeAreaView>
   )
 }

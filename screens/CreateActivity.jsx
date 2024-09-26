@@ -7,12 +7,11 @@ import {
     Text, 
     TextInput, 
     View, 
-    Platform, 
     Alert, 
 } from 'react-native'
 import axios from 'axios';
 import moment from 'moment';
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {SlideAnimation} from 'react-native-modals';
@@ -43,6 +42,9 @@ const CreateActivity = () => {
     const [taggedVenue, setTaggedVenue] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selected, setSelected] = useState(["Public"]);
+
+    const {userId} = useContext(AuthContext);
+    console.log('userID', userId);
 
     const generateDates = () => {
         const dates = [];
@@ -75,6 +77,45 @@ const CreateActivity = () => {
         setDate(date);
     };
 
+    const createGame = async () => {
+        try {
+          const admin = userId;
+          const time = timeInterval;
+          const gameData = {
+            sport,
+            area: taggedVenue,
+            date,
+            time,
+            admin,
+            totalPlayers: noOfPlayers,
+          };
+    
+          const response = await axios.post(
+            'http://192.168.237.220:8000/creategame',
+            gameData,
+          );
+          console.log('Game created:', response.data);
+          if (response.status == 200) {
+            Alert.alert('Success!', 'Game created Succesfully', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'OK', onPress: () => navigation.goBack()},
+            ]);
+    
+            setSport('');
+            setArea('');
+            setDate('');
+            setTimeInterval('');
+            setnoOfPlayers('');
+          }
+        } catch (error) {
+          console.error('Failed to create game:', error);
+        }
+    };
+
     useEffect(() => {
         // console.log('Turf Tagged');
         if (route?.params?.taggedVenue) {
@@ -83,12 +124,15 @@ const CreateActivity = () => {
     }, [route?.params]);
     console.log('tagged', route?.params?.taggedVenue);
 
+    console.log(route.params);
     useEffect(() => {
         if (route?.params?.timeInterval) {
           setTimeInterval(route?.params?.timeInterval);
+        } else if (route?.params?.timeType) {
+            setTimeInterval(route?.params?.timeType);  // Use timeType when no timeInterval
         }
     }, [route.params]);
-    console.log(timeInterval); 
+    // console.log(timeInterval); 
       
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -138,11 +182,12 @@ const CreateActivity = () => {
                         <View style={styles.form}>
                             <Text style={styles.formHeader}>Area</Text>
                             <TextInput
+                              editable={false}
                               value={area ? area : taggedVenue}
                               onChangeText={setArea}
-                              placeholderTextColor="gray"
                               style={styles.formInput}
                               placeholder={'Locality or venue name'}
+                              placeholderTextColor={area ? 'black' : 'gray'}
                             />
                         </View>
                         <AntDesign name="arrowright" size={30} color="gray" />
@@ -181,9 +226,18 @@ const CreateActivity = () => {
                         >
                             <Text style={styles.formHeader}>Time</Text>
                             <TextInput
+                                editable={false}
                                 style={styles.formInput}
                                 placeholderTextColor={timeInterval ? 'black' : 'gray'}
-                                placeholder={timeInterval ? timeInterval : 'Pick Exact Time'}
+                                placeholder={
+                                    timeInterval && !timeInterval.includes('AM') && !timeInterval.includes('PM') 
+                                    ? timeInterval === 'Morning' ? "5:00 AM - 7:00 AM" :
+                                        timeInterval === 'Afternoon' ? "9:00 AM - 3:00 PM" :
+                                        timeInterval === 'Evening' ? "4:00 PM - 7:00 PM" :
+                                        timeInterval === 'Night' ? "8:00 PM - 11:00 PM" :
+                                        'Pick Exact Time'  // if time interval having Morning, Evening then render time accordingly
+                                    : timeInterval || 'Pick Exact Time'     // if time interval having AM/PM then render time
+                                }
                             />
                         </Pressable>
                         <AntDesign name="arrowright" size={30} color="gray" />
@@ -297,7 +351,7 @@ const CreateActivity = () => {
         </SafeAreaView>
 
         <Pressable
-            // onPress={createGame}
+            onPress={createGame}
             style={styles.createBtn}
         >
         <Text style={styles.createTxt}> Create Activity</Text>
@@ -316,21 +370,28 @@ const CreateActivity = () => {
             visible={modalVisible}
             onTouchOutside={() => setModalVisible(!modalVisible)}
         >
-            <ModalContent style={styles.rehostContainer}>
+            <ModalContent style={styles.dateContainer}>
                 <View>
-                <Text style={styles.rehostTxt}> Choose date/ time to rehost </Text>
-                <View style={styles.hostDate}>
-                    {dates?.map((item, index) => (
-                        <Pressable
-                            key={index}
-                            onPress={() => selectDate(item?.actualDate)}
-                            style={styles.dateBtn}
-                        >
-                            <Text>{item?.displayDate}</Text>
-                            <Text style={styles.dayOfWeek}>{item?.dayOfWeek} </Text>
-                        </Pressable>
-                    ))}
-                </View>
+                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <Text style={styles.dateTxt}> Choose date to Host </Text>
+                        <Image 
+                            // source={require('../public/animations/calender.gif')}
+                            source={require('../public/animations/time-date.gif')}
+                            style={styles.dateAnimation}
+                        />
+                    </View>
+                    <View style={styles.hostDate}>
+                        {dates?.map((item, index) => (
+                            <Pressable
+                                key={index}
+                                onPress={() => selectDate(item?.actualDate)}
+                                style={styles.dateBtn}
+                            >
+                                <Text>{item?.displayDate}</Text>
+                                <Text style={styles.dayOfWeek}>{item?.dayOfWeek} </Text>
+                            </Pressable>
+                        ))}
+                    </View>
                 </View>
             </ModalContent>
         </BottomModal>
@@ -493,14 +554,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '500',
     },
-    rehostContainer: {
+    dateContainer: {
         backgroundColor: 'white',
         height: 400, 
         width: '100%', 
     },
-    rehostTxt: {
+    dateTxt: {
         textAlign: 'center', 
-        fontSize: 16, 
+        fontSize: 22, 
         fontWeight: 'bold',
     },
     hostDate: {
@@ -518,9 +579,15 @@ const styles = StyleSheet.create({
         width: '30%',
         justifyContent: 'center',
         alignItems: 'center',
-  },
+   },
     dayOfWeek: {
         color: 'gray', 
         marginTop: 8
+    },
+    dateAnimation: { 
+        height: 70, 
+        width: 120, 
+        marginLeft: "auto", 
+        marginRight: "auto" 
     },
 })

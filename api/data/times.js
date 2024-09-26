@@ -1,31 +1,32 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
+  import Feather from 'react-native-vector-icons/Feather';
+  import Fontisto from '@expo/vector-icons/Fontisto';
+  import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const times = [
-    {
-      id: '0',
-      type: 'morning',
-      timings: '12 am - 9 am',
-      icon: <Ionicons name="md-partly-sunny-outline" size={24} color="black" />,
-    },
-    {
-      id: '1',
-      type: 'Day',
-      timings: '9 am - 4 pm',
-      icon: <Feather name="sun" size={24} color="black" />,
-    },
-    {
-      id: '2',
-      type: 'evening',
-      timings: '4pm - 9 pm',
-      icon: <Feather name="sunset" size={24} color="black" />,
-    },
-    {
-      id: '3',
-      type: 'night',
-      timings: '9pm am - 11 pm',
-      icon: <Ionicons name="cloudy-night-outline" size={24} color="black" />,
-    },
-];
+  const times = [
+      {
+        id: '0',
+        type: 'Morning',
+        timings: '5 AM - 7 AM',
+        icon: <MaterialCommunityIcons name="weather-sunset" size={40} color="black" />,
+      },
+      {
+        id: '1',
+        type: 'Afternoon',
+        timings: '9 AM - 3 PM',
+        icon: <Feather name="sun" size={40} color="black" />
+      },
+      {
+        id: '2',
+        type: 'Evening',
+        timings: '4pm - 7 PM',
+        icon: <Feather name="sunset" size={40} color="black" />,
+      },
+      {
+        id: '3',
+        type: 'Night',
+        timings: '8 AM - 11 PM',
+        icon: <Fontisto name="night-alt-cloudy" size={35} color="black" />,
+      },
+  ];
 
-export default times;
+  export default times;
