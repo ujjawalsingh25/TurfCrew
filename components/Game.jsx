@@ -13,7 +13,7 @@ const Game = ({item}) => {
 
   return (
     <Pressable 
-    //   onPress={() => navigation.navigate('Game', { item: item }) }
+      onPress={() => navigation.navigate('Game', { item: item }) }
       style={styles.container}
     >
         <View style={{marginTop: 10}}>

@@ -79,7 +79,7 @@ async function addVenues() {
     for (const venueData of venues) {   // Check if the venue already exists
       const existingVenue = await Venue.findOne({name: venueData?.name});  
       if (existingVenue) {
-        console.log(`Venue "${venueData.name}" already exists. Skipping.`);
+        console.log(`Venue "${venueData.name}" already exists.`);
       } else { // Add the new venue
         const newVenue = new Venue(venueData);
         await newVenue.save();

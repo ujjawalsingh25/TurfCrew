@@ -14,19 +14,20 @@ import SelectImage from '../screens/SelectImage';
 import StartScreen from '../screens/StartScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import CreateActivity from '../screens/CreateActivity';
+import TagVenueScreen from '../screens/TagVenueScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import PasswordScreen from '../screens/PasswordScreen';
 import PrefinalScreen from '../screens/PrefinalScreen';
 import TurfsInfoScreen from '../screens/TurfsInfoScreen';
+import GameSetupScreen from '../screens/GameSetupScreen';
+import SelectTimeScreen from '../screens/SelectTimeScreen';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import CreateActivity from '../screens/CreateActivity';
-import TagVenueScreen from '../screens/TagVenueScreen';
-import SelectTimeScreen from '../screens/SelectTimeScreen';
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -166,6 +167,11 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name="Time" 
                     component={SelectTimeScreen} 
+                    // options={{headerShown: false }}
+                />
+                <Stack.Screen 
+                    name="Game" 
+                    component={GameSetupScreen} 
                     // options={{headerShown: false }}
                 />
             </Stack.Navigator>
