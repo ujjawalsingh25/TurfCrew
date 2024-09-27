@@ -1,10 +1,12 @@
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import axios from 'axios';
+import React, { useContext, useLayoutEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import { Alert, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 
-import {SlideAnimation} from 'react-native-modals';
+import { AuthContext } from '../AuthContext';
 import {BottomModal} from 'react-native-modals';
 import {ModalContent} from 'react-native-modals';
+import {SlideAnimation} from 'react-native-modals';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -14,6 +16,35 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const GameSetupScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const [query, setQuery] = useState("");
+  const [comment, setComment] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const {userId, setToken, setUserId} = useContext(AuthContext);
+  
+  console.log('Route', route.params);
+
+    const sendJoinRequest = async gameId => {
+        try {
+            const response = await axios.post(
+            `http://192.168.237.220:8000/games/${gameId}/request`,
+            { userId, comment },
+            );
+
+            if (response.status == 200) {
+            Alert.alert('Request Sent', 'please wait for the host to accept!', [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {text: 'OK', onPress: () => setModalVisible(false)},
+            ]);
+            }
+            console.log('Request sent successfully:', response.data);
+        } catch (error) {
+            console.error('Failed to send request:', error);
+        }
+    };
 
    useLayoutEffect(() => {
         navigation.setOptions({
@@ -37,7 +68,7 @@ const GameSetupScreen = () => {
 
   return (
     <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.nav}>
                     <View style={styles.gameDetail}>
@@ -283,20 +314,22 @@ const GameSetupScreen = () => {
                     GAME CHAT
                 </Text>
             </Pressable>
-        ) : userRequested ? (
-            <Pressable style={styles.cancel}>
-            <Text style={styles.cancelTxt}>
-                CANCEL REQUEST
-            </Text>
-            </Pressable>
-        ) : (
+        ) : 
+        // userRequested ? (
+        //     <Pressable style={styles.cancel}>
+        //     <Text style={styles.cancelTxt}>
+        //         CANCEL REQUEST
+        //     </Text>
+        //     </Pressable>
+        // ) : 
+        (
             <View style={styles.queryAndJoin}>
                 <Pressable style={styles.querySendBtn}>
                     <Text style={styles.querySendTxt}>
                         SEND QUERY
                     </Text>
                 </Pressable>
-                <Pressable style={styles.joinGameBtn}
+                <Pressable style={styles.joinGameBtn}   
                     onPress={() => setModalVisible(!modalVisible)}
                 >
                     <Text style={styles.joinGameTxt}>
@@ -308,38 +341,39 @@ const GameSetupScreen = () => {
 
         
         <BottomModal
-        // onBackdropPress={() => setModalVisible(!modalVisible)}
-        // swipeDirection={['up', 'down']}
-        // swipeThreshold={200}
-        // modalAnimation={
-        // new SlideAnimation({
-        //     slideFrom: 'bottom',
-        // })
-        // }
-        // onHardwareBackPress={() => setModalVisible(!modalVisible)}
-        // visible={modalVisible}
-        // onTouchOutside={() => setModalVisible(!modalVisible)}
+            onBackdropPress={() => setModalVisible(!modalVisible)}
+            swipeDirection={['up', 'down']}
+            swipeThreshold={200}
+            modalAnimation={
+                new SlideAnimation({
+                    slideFrom: 'bottom',
+                })
+            }
+            onHardwareBackPress={() => setModalVisible(!modalVisible)}
+            visible={modalVisible}
+            onTouchOutside={() => setModalVisible(!modalVisible)}
         >
         <ModalContent style={styles.modalContainer}>
-        <View>
-            <Text style={styles.join}>Join Game</Text>
-            <Text style={styles.submsg}>
-                {route?.params?.item?.adminName} has been putting efforts to
-                organize this game. Please send the request if you are quite sure
-                to attend
-            </Text>
+            <View>
+                <Text style={styles.join}>Join Game</Text>
+                <Text style={styles.submsg}>
+                    {route?.params?.item?.adminName} has been putting efforts to
+                    organize this game. Please send the request if you are quite sure
+                    to attend
+                </Text>
 
-            <View style={styles.req}>
-                <TextInput
-                    // value={comment}
-                    // multiline
-                    style={styles.msgInput}
-                    // onChangeText={text => setComment(text)}
-                    placeholder="Send a message to the host along with your request!"
-                    //   placeholderTextColor={"black"}
-                />
+                <View style={styles.req}>
+                    <TextInput
+                        value={comment}
+                        multiline
+                        style={{fontSize: comment ? 17 : 17}}
+                        onChangeText={text => setComment(text)}
+                        placeholder="Send a message to the host along with your request!"
+                        //   placeholderTextColor={"black"}
+                        />
+                </View>
                 <Pressable
-                    // onPress={() => sendJoinRequest(route?.params?.item?._id)}
+                    onPress={() => sendJoinRequest(route?.params?.item?._id)}
                     style={styles.sendReqBtn}
                 >
                     <Text style={styles.sendReqTxt}>
@@ -347,7 +381,6 @@ const GameSetupScreen = () => {
                     </Text>
                 </Pressable>
             </View>
-        </View>
         </ModalContent>
         </BottomModal>
     </>
@@ -369,9 +402,9 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     container: {
-        flex: 1,
+        // flex: 1,
         backgroundColor: 'white',
-        padding: 10,
+        // padding: 10,
     },
     break: {
         height: 1,
@@ -666,9 +699,9 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },        
     querySendBtn: {
-        backgroundColor: 'white',
+        backgroundColor: '#E8E8E8',
         marginTop: 'auto',
-        marginBottom: 30,
+        marginBottom: 12,
         padding: 15,
         marginHorizontal: 10,
         borderRadius: 4,
@@ -680,9 +713,9 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     joinGameBtn: {
-        backgroundColor: '#07bc0c',
+        backgroundColor: '#6495ED',
         marginTop: 'auto',
-        marginBottom: 30,
+        marginBottom: 12,
         padding: 15,
         marginHorizontal: 10,
         borderRadius: 4,
@@ -698,8 +731,8 @@ const styles = StyleSheet.create({
         marginTop: 'auto',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 12,
-        backgroundColor: '#E8E8E8',
+        // paddingVertical: 12,
+        backgroundColor: '#fff',
     },
     chatBtn: {
         backgroundColor: '#6495ED',
@@ -735,19 +768,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         borderRadius: 10,
-        height: 200,
+        height: 160,
         marginTop: 20,
     },
-    msgInput: {
-        fontFamily: 'Helvetica',
-        // fontSize: comment ? 17 : 17,
-    },
     sendReqBtn: {
-        marginTop: 'auto',
+        backgroundColor: '#6954ED',
+        marginTop: 20,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 15,
-        backgroundColor: 'green',
         borderRadius: 5,
         justifyContent: 'center',
         padding: 10,

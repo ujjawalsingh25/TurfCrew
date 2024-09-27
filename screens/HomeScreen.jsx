@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { StyleSheet, Text, View, ScrollView, Image, Pressable, ImageBackground } from 'react-native'
 
@@ -7,10 +7,47 @@ import spotlight from '../api/data/spot-light';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { AuthContext } from '../AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const HomeScreen = () => {
   const navigation = useNavigation(); 
+  const [user, setUser] = useState(null);
+  const {userId, setToken, setUserId} = useContext(AuthContext);
+
+  // const clearAuthToken = async () => {
+  //   try{
+  //     await AsyncStorage.removeItem("token");
+  //     setToken("");
+  //     setUserId("");
+  //     navigation.replace("Start")
+  //   } catch(error){
+  //     console.log("Error",error)
+  //   }
+  // }
   
+  // useEffect(() => {
+  //   clearAuthToken();
+  // },[])
+
+  const fetchUser = async () => {
+    try {
+      console.log('mysysy', userId);
+      const response = await axios.get(`http://192.168.237.220:8000/user/${userId}`);
+      console.log('Fetched user:', response.data);  
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (userId) {
+      fetchUser();
+    }
+  }, [userId]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -31,14 +68,15 @@ const HomeScreen = () => {
             <Image 
               style={styles.accountImg}
               source={{
-                uri: "https://cdn-icons-png.flaticon.com/128/4140/4140061.png"
+                // uri: uri ? "https://cdn-icons-png.flaticon.com/128/4140/4140061.png"
+                uri: user?.user?.image ? user.user.image : "https://cdn-icons-png.flaticon.com/128/4140/4140061.png",
               }}
             />
            </Pressable>
         </View>
       )
     })
-  }, [])
+  }, [user]);
 
   return (
     <ScrollView style={styles.container} >
