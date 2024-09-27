@@ -223,3 +223,62 @@ app.get('/upcoming', async (req, res) => {
     res.status(500).json({message: 'Failed to fetch upcoming games'});
   }
 });
+
+app.post('/games/:gameId/request', async (req, res) => {
+  try {
+    const {userId, comment} = req.body;           // Assuming the userId and comment are sent in the request body
+    const {gameId} = req.params;
+
+    const game = await Game.findById(gameId);         // Find the game by ID
+    if (!game) {
+      return res.status(404).json({message: 'Game not found'});
+    }
+
+    const existingRequest = game.requests.find(       // Check if the user has already requested to join
+      request => request.userId.toString() === userId,
+    );
+    if (existingRequest) {
+      return res.status(400).json({message: 'Request already sent'});
+    }
+    
+    game.requests.push({userId, comment});        // Add the user's ID and comment to the requests array
+    await game.save();            // Save the updated game document
+    res.status(200).json({message: 'Request sent successfully'});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: 'Failed to send request'});
+  }
+});
+
+app.get('/games/:gameId/requests', async (req, res) => {
+  try {
+    const {gameId} = req.params;
+    const game = await Game.findById(gameId).populate({
+      path: 'requests.userId',
+      select: 'email firstName lastName image skill noOfGames playpals sports',   // Select the fields you want to include
+    });
+
+    if (!game) {
+      return res.status(404).json({message: 'Game not found'});
+    }
+
+    const requestsWithUserInfo = game.requests.map(request => ({
+      userId: request.userId._id,
+      email: request.userId.email,
+      firstName: request.userId.firstName,
+      lastName: request.userId.lastName,
+      image: request.userId.image,
+      skill: request.userId.skill,
+      noOfGames: request.userId.noOfGames,
+      playpals: request.userId.playpals,
+      sports: request.userId.sports,
+      comment: request.comment,
+    }));
+
+    res.json(requestsWithUserInfo);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: 'Failed to fetch requests'});
+  }
+});
+

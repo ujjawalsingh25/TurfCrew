@@ -2,6 +2,10 @@ import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput
 import React, { useLayoutEffect } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 
+import {SlideAnimation} from 'react-native-modals';
+import {BottomModal} from 'react-native-modals';
+import {ModalContent} from 'react-native-modals';
+
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -301,6 +305,51 @@ const GameSetupScreen = () => {
                 </Pressable>
             </View>
         )}
+
+        
+        <BottomModal
+        // onBackdropPress={() => setModalVisible(!modalVisible)}
+        // swipeDirection={['up', 'down']}
+        // swipeThreshold={200}
+        // modalAnimation={
+        // new SlideAnimation({
+        //     slideFrom: 'bottom',
+        // })
+        // }
+        // onHardwareBackPress={() => setModalVisible(!modalVisible)}
+        // visible={modalVisible}
+        // onTouchOutside={() => setModalVisible(!modalVisible)}
+        >
+        <ModalContent style={styles.modalContainer}>
+        <View>
+            <Text style={styles.join}>Join Game</Text>
+            <Text style={styles.submsg}>
+                {route?.params?.item?.adminName} has been putting efforts to
+                organize this game. Please send the request if you are quite sure
+                to attend
+            </Text>
+
+            <View style={styles.req}>
+                <TextInput
+                    // value={comment}
+                    // multiline
+                    style={styles.msgInput}
+                    // onChangeText={text => setComment(text)}
+                    placeholder="Send a message to the host along with your request!"
+                    //   placeholderTextColor={"black"}
+                />
+                <Pressable
+                    // onPress={() => sendJoinRequest(route?.params?.item?._id)}
+                    style={styles.sendReqBtn}
+                >
+                    <Text style={styles.sendReqTxt}>
+                        Send Request
+                    </Text>
+                </Pressable>
+            </View>
+        </View>
+        </ModalContent>
+        </BottomModal>
     </>
   )
 }
@@ -667,5 +716,46 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '500',
     },
-
+    modalContainer: {
+        width: '100%', 
+        height: 400, 
+        backgroundColor: 'white'
+    },
+    join: {
+        fontSize: 15, 
+        fontWeight: '500', 
+        color: 'gray'
+    },
+    submsg: {
+        marginTop: 25, 
+        color: 'gray'
+    },
+    req: {
+        borderColor: '#E0E0E0',
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 10,
+        height: 200,
+        marginTop: 20,
+    },
+    msgInput: {
+        fontFamily: 'Helvetica',
+        // fontSize: comment ? 17 : 17,
+    },
+    sendReqBtn: {
+        marginTop: 'auto',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 15,
+        backgroundColor: 'green',
+        borderRadius: 5,
+        justifyContent: 'center',
+        padding: 10,
+    },
+    sendReqTxt: {
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 15,
+        fontWeight: '500',
+    },
 })
