@@ -175,10 +175,6 @@ const styles = StyleSheet.create({
     width: '50%',
     textAlign: 'center',
   },
-  loginQues: {
-    color:"#212121",
-    fontSize:20,
-  },
   signup: {
     marginTop: 30,
     justifyContent: 'center',
@@ -201,6 +197,10 @@ const styles = StyleSheet.create({
   },
   login: {
     color:"#6495ED",
+    fontSize:20,
+  },
+  loginQues: {
+    color:"#212121",
     fontSize:20,
   },
   logo: {

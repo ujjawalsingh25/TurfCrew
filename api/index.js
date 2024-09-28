@@ -67,7 +67,6 @@ app.post('/login', async (req, res) => {
 
         const secretKey = crypto.randomBytes(32).toString('hex');
         const token = jwt.sign({userId: user._id}, secretKey);
-
         res.status(200).json({token});
     } catch (error) {
         console.log("Error loggin In",  error);
@@ -104,33 +103,33 @@ app.get('/venues', async (req, res) => {
 });
 
 app.post('/creategame', async (req, res) => {
-    try {
-      const {sport, area, date, time, admin, totalPlayers} = req.body;
-  
-      const activityAccess = 'public';
-  
-      console.log('sport', sport);
-      console.log(area);
-      console.log(date);
-      console.log(admin);
-  
-      const newGame = new Game({
-        sport,
-        area,
-        date,
-        time,
-        admin,
-        totalPlayers,
-        players: [admin],
-      });
-  
-      const savedGame = await newGame.save();
-      res.status(200).json(savedGame);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({message: 'Failed to create game'});
-    }
-}); 
+  try {
+    const {sport, area, date, time, admin, totalPlayers} = req.body;
+
+    const activityAccess = 'public';
+
+    console.log('sport', sport);
+    console.log(area);
+    console.log(date);
+    console.log(admin);
+
+    const newGame = new Game({
+      sport,
+      area,
+      date,
+      time,
+      admin,
+      totalPlayers,
+      players: [admin],
+    });
+
+    const savedGame = await newGame.save();
+    res.status(200).json(savedGame);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: 'Failed to create game'});
+  }
+});
 
 app.get('/games', async (req, res) => {
     try {
