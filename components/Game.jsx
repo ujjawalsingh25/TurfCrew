@@ -1,5 +1,6 @@
+import React, { useContext } from 'react';
+import { AuthContext } from '../AuthContext';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 
@@ -9,7 +10,12 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Game = ({item}) => {
+    const {userId, setUserId} = useContext(AuthContext);
     const navigation = useNavigation();
+    const isUserInRequests = item?.requests.some(
+        request => request.userId === userId,
+    );
+  console.log('Game', item);
 
   return (
     <Pressable 
@@ -78,7 +84,17 @@ const Game = ({item}) => {
                         uri: 'https://playo.co/_next/image?url=https%3A%2F%2Fplayo-website.gumlet.io%2Fplayo-website-v3%2Fmatch_full.png&w=256&q=75',
                     }}
                     />
-                )}
+                ) || 
+                !isUserInRequests && (
+                    <View style={styles.requested}>
+                      <View>
+                        <Text style={{textAlign: 'center', color: 'white'}}>
+                          Requested
+                        </Text>
+                      </View>
+                    </View>
+                  )
+                }
             </View>
 
             <View style={styles.location}>
@@ -86,7 +102,7 @@ const Game = ({item}) => {
                 <Text style={styles.locationTxt} >
                     {item?.area}
                 </Text>
-                <Feather name="bookmark" size={28} color="black" />
+                {/* <Feather name="bookmark" size={28} color="black" /> */}
             </View>
 
             <View style={styles.tags}>
@@ -101,7 +117,22 @@ const Game = ({item}) => {
                     </Text>
                 </View>
             </View>
-
+            {/* {!isUserInRequests && (
+            <View
+              style={{
+                backgroundColor: '#4ba143',
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderRadius: 5,
+                marginTop: 10,
+              }}>
+              <View>
+                <Text style={{textAlign: 'center', color: 'white'}}>
+                  Requested
+                </Text>
+              </View>
+            </View>
+          )} */}
         </View>
     </Pressable>
   )
@@ -125,7 +156,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        
     },
     regularTxt: {
         color: 'gray', fontSize: 16, 
@@ -190,6 +220,13 @@ const styles = StyleSheet.create({
         width: 100, 
         height: 70, 
         resizeMode: 'contain'
+    },
+    requested: {
+        backgroundColor: '#4ba143',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 5,
+        marginTop: 10,
     },
     location: {
         flexDirection: 'row',

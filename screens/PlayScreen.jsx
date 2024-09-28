@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
-import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import Game from '../components/Game';
@@ -11,19 +11,36 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UpComingGame from '../components/UpcomingGame';
 
 const PlayScreen = () => {
+  const route = useRoute();
   const navigation = useNavigation(); 
   const { userId } = useContext(AuthContext);
-  const [option, setOptions] = useState("My Sports");
+  // const [option, setOptions] = useState("My Sports");
   const [sport, setSport] = useState("Cricket");
   const [games, setGames] = useState([]);
   const [user, setUser] = useState("");
   const [upcomingGames, setUpcomingGames] = useState([]);
 
+  const initialOption = route?.params?.initialOption || "My Sports";
+  const [option, setOptions] = useState(initialOption);
+
+  useEffect(() => {
+    if (initialOption) {
+      setOptions(initialOption);
+    }
+  }, [initialOption]);
 
   useEffect(() => {
     fetchGames();
   }, []);
   console.log('Games', games);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) {
+        fetchGames();
+      }
+    }, [userId]),
+  );
 
   const fetchGames = async () => {
     try {

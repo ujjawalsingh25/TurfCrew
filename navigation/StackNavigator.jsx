@@ -22,6 +22,7 @@ import PrefinalScreen from '../screens/PrefinalScreen';
 import TurfsInfoScreen from '../screens/TurfsInfoScreen';
 import GameSetupScreen from '../screens/GameSetupScreen';
 import SelectTimeScreen from '../screens/SelectTimeScreen';
+import ManageRequestsScreen from '../screens/ManageRequestsScreen';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -172,6 +173,11 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name="Game" 
                     component={GameSetupScreen} 
+                    // options={{headerShown: false }}
+                />
+                <Stack.Screen 
+                    name="Manage" 
+                    component={ManageRequestsScreen} 
                     // options={{headerShown: false }}
                 />
             </Stack.Navigator>

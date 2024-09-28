@@ -108,7 +108,7 @@ const LoginScreen = () => {
 
             <View style={styles.logo}>
               <Image 
-                  source={require('../public/logo.png')} // Corrected local image source
+                  source={require('../public/logo.png')} 
                   style={styles.logoImg}
                 />
               <Text style={styles.logoTxt}>Your Sports Community</Text>

@@ -20,7 +20,11 @@ const GameSetupScreen = () => {
   const [comment, setComment] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const {userId, setToken, setUserId} = useContext(AuthContext);
-  
+
+  const userRequested = route?.params?.item.requests.some(
+    request => request.userId === userId,
+  );
+  console.log('true', userRequested);
   console.log('Route', route.params);
 
     const sendJoinRequest = async gameId => {
@@ -227,13 +231,11 @@ const GameSetupScreen = () => {
 
                                 <Pressable>
                                     <Pressable style={styles.actionBtn}
-                                        // onPress={() =>
-                                        //     navigation.navigate('Manage', {
-                                        //     requests: requests,
-                                        //     userId: userId,
-                                        //     gameId: route?.params?.item?._id,
-                                        // })
-                                        // }
+                                        onPress={() => navigation.navigate('Manage', {
+                                            // requests: requests,
+                                            userId: userId,
+                                            gameId: route?.params?.item?._id,
+                                        })}
                                     >
                                     <Image
                                         style={styles.actionImg}
@@ -314,15 +316,13 @@ const GameSetupScreen = () => {
                     GAME CHAT
                 </Text>
             </Pressable>
-        ) : 
-        // userRequested ? (
-        //     <Pressable style={styles.cancel}>
-        //     <Text style={styles.cancelTxt}>
-        //         CANCEL REQUEST
-        //     </Text>
-        //     </Pressable>
-        // ) : 
-        (
+        ) : userRequested ? (
+            <Pressable style={styles.cancel}>
+            <Text style={styles.cancelTxt}>
+                CANCEL REQUEST
+            </Text>
+            </Pressable>
+        ) : (
             <View style={styles.queryAndJoin}>
                 <Pressable style={styles.querySendBtn}>
                     <Text style={styles.querySendTxt}>
@@ -370,7 +370,7 @@ const GameSetupScreen = () => {
                         onChangeText={text => setComment(text)}
                         placeholder="Send a message to the host along with your request!"
                         //   placeholderTextColor={"black"}
-                        />
+                    />
                 </View>
                 <Pressable
                     onPress={() => sendJoinRequest(route?.params?.item?._id)}

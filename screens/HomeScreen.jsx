@@ -118,7 +118,10 @@ const HomeScreen = () => {
 
           <Text style={{marginTop: 4, color: "gray"}}>You have no Games Today</Text>
 
-          <Pressable style={{marginTop: 10, marginBottom: 5, marginLeft: "auto", marginRight: "auto"}}>
+          <Pressable
+            onPress={() => navigation.navigate("Play", {initialOption: 'Calendar'})}
+            style={{marginTop: 10, marginBottom: 5, marginLeft: "auto", marginRight: "auto"}}
+          >
             <Text style={{fontSize: 15, fontWeight: 600, textDecorationLine: "underline"}}>View Calendar</Text>
           </Pressable>
         </View>

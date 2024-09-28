@@ -295,3 +295,50 @@ app.get('/user/:userId', async (req, res) => {
     res.status(500).json({message: 'Error fetching the user details'});
   }
 });
+
+app.post('/accept', async (req, res) => {
+  const {gameId, userId} = req.body;
+  console.log('user', userId);
+  console.log('heyy', gameId);
+
+  try { 
+    const game = await Game.findById(gameId);               // Find the game
+    if (!game) {
+      return res.status(404).json({message: 'Game not found'});
+    }
+    game.players.push(userId);
+
+    // game.requests.splice(requestIndex, 1);         // Remove the user from the requests array
+
+    await Game.findByIdAndUpdate(
+      gameId,
+      {
+        $pull: {requests: {userId: userId}},
+      },
+      {new: true},
+    );
+
+    
+    await game.save();                // Save the updated game
+    res.status(200).json({message: 'Request accepted', game});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: 'Server error'});
+  }
+});
+
+app.get('/game/:gameId/players', async (req, res) => {
+  try {
+    const {gameId} = req.params;
+    const game = await Game.findById(gameId).populate('players');
+    if (!game) {
+      return res.status(404).json({message: 'Game not found'});
+    }
+
+    res.status(200).json(game.players);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: 'Failed to fetch players'});
+  }
+});
+
