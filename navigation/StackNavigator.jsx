@@ -10,6 +10,7 @@ import HomeScreen from '../screens/HomeScreen';
 import PlayScreen from '../screens/PlayScreen';
 import BookScreen from '../screens/BookScreen';
 import NameScreen from '../screens/NameScreen';
+import SlotScreen from '../screens/SlotScreen';
 import SelectImage from '../screens/SelectImage';
 import StartScreen from '../screens/StartScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -178,6 +179,11 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name="Manage" 
                     component={ManageRequestsScreen} 
+                    // options={{headerShown: false }}
+                />
+                <Stack.Screen 
+                    name="Slot" 
+                    component={SlotScreen} 
                     // options={{headerShown: false }}
                 />
             </Stack.Navigator>

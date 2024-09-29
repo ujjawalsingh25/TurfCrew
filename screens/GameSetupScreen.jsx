@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useContext, useLayoutEffect, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { Alert, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 
@@ -17,6 +17,7 @@ const GameSetupScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [query, setQuery] = useState("");
+  const [venues, setVenues] = useState([]);
   const [comment, setComment] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const {userId, setToken, setUserId} = useContext(AuthContext);
@@ -26,6 +27,10 @@ const GameSetupScreen = () => {
   );
   console.log('true', userRequested);
   console.log('Route', route.params);
+
+    const [startTime, endTime] = route?.params?.item?.time
+        ?.split(' - ')
+        .map(time => time.trim());
 
     const sendJoinRequest = async gameId => {
         try {
@@ -50,7 +55,23 @@ const GameSetupScreen = () => {
         }
     };
 
-   useLayoutEffect(() => {
+    useEffect(() => {
+        const fetchVenues = async () => {
+            try {
+              const response = await axios.get('http://192.168.237.220:8000/venues');
+              setVenues(response.data);
+            } catch (error) {
+              console.error('Failed to fetch venues:', error);
+            }
+          };
+      
+          fetchVenues(); 
+    }, [])
+    const venue = venues?.find(item => item?.name == route?.params?.item?.area);
+    console.log('Venues: ', venue);
+
+
+    useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "",
             headerStyle: { backgroundColor: '#294461' },
@@ -103,18 +124,16 @@ const GameSetupScreen = () => {
                     </View>
 
                     <Pressable style={styles.groundBtn}
-                        // onPress={() =>
-                        // navigation.navigate('Slot', {
-                        //     place: route?.params?.item?.area, // Pass the selected venue object
-                        //     sports: venue?.sportsAvailable || [], // Pass the sports available at the venue
-                        //     date: route?.params?.item?.date,
-                        //     slot: route?.params?.item?.time,
-                        //     startTime: startTime,
-                        //     endTime: endTime,
-                        //     gameId: route?.params?.item?._id,
-                        //     bookings: venue?.bookings,
-                        // })
-                        // }
+                        onPress={() => navigation.navigate('Slot', {
+                            place: route?.params?.item?.area,        // Pass the selected venue object
+                            sports: venue?.sportsAvailable || [],        // Pass the sports available at the venue
+                            date: route?.params?.item?.date,
+                            slot: route?.params?.item?.time,
+                            startTime: startTime,
+                            endTime: endTime,
+                            gameId: route?.params?.item?._id,
+                            bookings: venue?.bookings,
+                        })}
                     >
                         <Entypo name="location" size={30} color="white" />
 
