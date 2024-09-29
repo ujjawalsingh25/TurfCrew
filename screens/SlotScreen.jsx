@@ -382,7 +382,7 @@ const SlotScreen = () => {
                 selectedCourt: selectedCourt,
                 selectedSport: selectedSport,
                 price: price,
-                selectedTime: timings.time,
+                selectedTime: selectedTime,
                 selectedDate: selectedDate,
                 place: route.params.place,
                 gameId: route?.params?.gameId,

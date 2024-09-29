@@ -14,7 +14,9 @@ import SlotScreen from '../screens/SlotScreen';
 import SelectImage from '../screens/SelectImage';
 import StartScreen from '../screens/StartScreen';
 import LoginScreen from '../screens/LoginScreen';
+import PlayerScreen from '../screens/PlayerScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import PaymentScreen from '../screens/PaymentScreen';
 import CreateActivity from '../screens/CreateActivity';
 import TagVenueScreen from '../screens/TagVenueScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -184,6 +186,16 @@ const StackNavigator = () => {
                 <Stack.Screen 
                     name="Slot" 
                     component={SlotScreen} 
+                    // options={{headerShown: false }}
+                />
+                <Stack.Screen 
+                    name="Payment" 
+                    component={PaymentScreen} 
+                    // options={{headerShown: false }}
+                />
+                <Stack.Screen 
+                    name="Players" 
+                    component={PlayerScreen} 
                     // options={{headerShown: false }}
                 />
             </Stack.Navigator>

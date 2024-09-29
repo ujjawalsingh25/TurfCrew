@@ -14,17 +14,22 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const GameSetupScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const [query, setQuery] = useState("");
-  const [venues, setVenues] = useState([]);
-  const [comment, setComment] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const {userId, setToken, setUserId} = useContext(AuthContext);
-
-  const userRequested = route?.params?.item.requests.some(
-    request => request.userId === userId,
-  );
+    const navigation = useNavigation();
+    const route = useRoute();
+    const [query, setQuery] = useState("");
+    const [venues, setVenues] = useState([]);
+    const [comment, setComment] = useState("");
+    const [matchFull, setMatchFull] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const {userId, setToken, setUserId} = useContext(AuthContext);
+    
+    const [players, setPlayers] = useState([]);
+    const [requests, setRequests] = useState([]);
+    const gameId = route?.params?.item?._id;
+    
+    const userRequested = route?.params?.item.requests.some(
+        request => request.userId === userId,
+    );
   console.log('true', userRequested);
   console.log('Route', route.params);
 
@@ -70,6 +75,59 @@ const GameSetupScreen = () => {
     const venue = venues?.find(item => item?.name == route?.params?.item?.area);
     console.log('Venues: ', venue);
 
+    const toggleMatchFullStatus = async gameId => {
+        try {
+          // Call the backend endpoint to toggle the matchFull status
+          const response = await axios.post(
+            'http://192.168.237.220:8000/toggle-match-full',
+            {gameId},
+          );
+    
+          if (response.status === 200) {
+            // Display a success message
+            Alert.alert('Success', `Match full status updated`);
+    
+            setMatchFull(!matchFull);
+            // Optionally, refresh game data or update UI accordingly
+          }
+        } catch (error) {
+          console.error('Failed to update match full status:', error);
+          Alert.alert('Error', 'Failed to update match full status');
+        }
+    };
+    console.log('MatchFull: ', route?.params?.item?.matchFull);
+
+    useEffect(() => {
+        fetchRequests();
+    }, []);
+
+    const fetchRequests = async () => {
+        try {
+        const response = await axios.get(
+            `http://192.168.237.220:8000/games/${gameId}/requests`,
+        );
+        setRequests(response.data);
+        } catch (error) {
+        console.error('Failed to fetch requests:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPlayers();
+    }, []);
+
+    const fetchPlayers = async () => {
+    try {
+        const response = await axios.get(
+        `http://192.168.237.220:8000/game/${gameId}/players`,
+        );
+        setPlayers(response.data);
+    } catch (error) {
+        console.error('Failed to fetch players:', error);
+    }
+    };
+    console.log('players', players);
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -104,15 +162,13 @@ const GameSetupScreen = () => {
                         <View style={styles.matchFull}>
                             <Text style={styles.matchFullTxt}> Match Full </Text>
                             <FontAwesome
-                            //   onPress={() => toggleMatchFullStatus(route?.params?.item?._id)}
-                            //   name={
-                            //     matchFull || route?.params?.item?.matchFull == true
-                            //       ? 'toggle-on'
-                            //       : 'toggle-off'
-                            //   }
-                            name="toggle-on"
-                            size={24}
-                            color="white"
+                                onPress={() => toggleMatchFullStatus(route?.params?.item?._id)}
+                                name={
+                                    matchFull || route?.params?.item?.matchFull == true
+                                    ? 'toggle-on'
+                                    : 'toggle-off'
+                                }
+                                size={24} color="white"
                             />
                         </View>
                     </View>
@@ -302,7 +358,7 @@ const GameSetupScreen = () => {
                         </View>
                     ) : (
                         <Pressable
-                            // onPress={() => navigation.navigate('Players', { players: players, })}
+                            onPress={() => navigation.navigate('Players', { players: players, })}
                             style={styles.playersBtn}
                         >
                             <View style={styles.player}>
