@@ -1,20 +1,24 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, Text, View, ScrollView, Image, Pressable, ImageBackground } from 'react-native'
+import { useNavigation } from '@react-navigation/native';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, Image, Pressable, ImageBackground } from 'react-native';
 
+import axios from 'axios';
+import 'core-js/stable/atob';
+import { jwtDecode } from 'jwt-decode';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { AuthContext } from '../AuthContext';
 import spotlight from '../api/data/spot-light';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { AuthContext } from '../AuthContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
 const HomeScreen = () => {
   const navigation = useNavigation(); 
   const [user, setUser] = useState(null);
   const {userId, setToken, setUserId} = useContext(AuthContext);
+  const [upcomingGames, setUpcomingGames] = useState([]);
 
   // const clearAuthToken = async () => {
   //   try{
@@ -33,7 +37,7 @@ const HomeScreen = () => {
 
   const fetchUser = async () => {
     try {
-      console.log('mysysy', userId);
+      console.log('UserId: ', userId);
       const response = await axios.get(`http://192.168.237.220:8000/user/${userId}`);
       console.log('Fetched user:', response.data);  
       setUser(response.data);
@@ -47,6 +51,39 @@ const HomeScreen = () => {
       fetchUser();
     }
   }, [userId]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = await AsyncStorage.getItem('token');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.userId;
+      setUserId(userId);
+    };
+
+    fetchUser();
+  }, []);
+  // console.log('user', userId);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUpcomingGames();
+    }
+  }, [userId]);
+
+  const fetchUpcomingGames = async () => {
+    try {
+      // console.log('UpcomingGame: ', userId);
+      const response = await axios.get(
+        `http://192.168.237.220:8000/upcoming?userId=${userId}`,
+      );
+      setUpcomingGames(response.data);
+    } catch (error) {
+      console.error('Failed to fetch upcoming games:', error);
+    }
+  };
+  // console.log('user', upcomingGames?.length);
+
+
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -127,7 +164,10 @@ const HomeScreen = () => {
         </View>
 
         <View style={{flexDirection: "row", padding: 13, alignItems: "center", gap: 20}}>
-          <Pressable style={{flex:1}}>
+          <Pressable 
+            onPress={() => navigation.navigate('Play')}
+            style={{flex:1}}
+          >
             <View style={{borderRadius:10}}>
               <Image 
                 style={{width: 200, height: 120, borderRadius: 10}}
@@ -136,7 +176,10 @@ const HomeScreen = () => {
                 }}
               />
             </View>
-            <Pressable style={{backgroundColor: "white", padding: 12, width: 200, borderRadius: 10}}>
+            <Pressable 
+              onPress={() => navigation.navigate('Play')}
+              style={{backgroundColor: "white", padding: 12, width: 200, borderRadius: 10}}
+            >
               <View>
                 <Text style={{fontSize: 15, fontWeight: 500}}>PLAY</Text>
                 <Text style={{fontSize: 15, color: "gray", marginTop: 7}}>Find PLayers and join their activities</Text>
@@ -144,7 +187,10 @@ const HomeScreen = () => {
             </Pressable>
           </Pressable>
           
-          <Pressable style={{flex:1}}>
+          <Pressable 
+            style={{flex:1}}
+            onPress={() => navigation.navigate('Book')}
+          >
             <View style={{borderRadius:10}}>
               <Image 
                 style={{width: 200, height: 120, borderRadius: 10}}
@@ -153,7 +199,10 @@ const HomeScreen = () => {
                 }}
               />
             </View>
-            <Pressable style={{backgroundColor: "white", padding: 12, width: 200, borderRadius: 10}}>
+            <Pressable 
+              onPress={() => navigation.navigate('Book')}
+              style={{backgroundColor: "white", padding: 12, width: 200, borderRadius: 10}}
+            >
               <View>
                 <Text style={{fontSize: 15, fontWeight: 500}}>BOOK</Text>
                 <Text style={{fontSize: 15, color: "gray", marginTop: 7}}>Book Your Slot in Venues Nearby</Text>
@@ -218,6 +267,17 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  accountImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+  },
+  headerRt: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    margin: 15,
+  },
   container: {
     flex: 1,
     backgroundColor: "#F8F8F8",
@@ -244,17 +304,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     elevation: 5,
-  },
-  accountImg: {
-    width: 40,
-    height: 40,
-    borderRadius: 15,
-  },
-  headerRt: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    margin: 15,
   },
   viewContainer2: {
     flexDirection: "row",

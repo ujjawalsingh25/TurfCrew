@@ -30,8 +30,8 @@ const GameSetupScreen = () => {
     const userRequested = route?.params?.item.requests.some(
         request => request.userId === userId,
     );
-  console.log('true', userRequested);
-  console.log('Route', route.params);
+//   console.log('true', userRequested);
+//   console.log('Route', route.params);
 
     const [startTime, endTime] = route?.params?.item?.time
         ?.split(' - ')
@@ -73,29 +73,35 @@ const GameSetupScreen = () => {
           fetchVenues(); 
     }, [])
     const venue = venues?.find(item => item?.name == route?.params?.item?.area);
-    console.log('Venues: ', venue);
+    // console.log('Venues: ', venue);
+
+    useEffect(() => {
+        setMatchFull(route?.params?.item?.matchFull);
+    }, [route?.params?.item?.matchFull]);
+    
 
     const toggleMatchFullStatus = async gameId => {
         try {
-          // Call the backend endpoint to toggle the matchFull status
-          const response = await axios.post(
-            'http://192.168.237.220:8000/toggle-match-full',
-            {gameId},
-          );
-    
-          if (response.status === 200) {
-            // Display a success message
-            Alert.alert('Success', `Match full status updated`);
-    
-            setMatchFull(!matchFull);
-            // Optionally, refresh game data or update UI accordingly
-          }
+            const newMatchFullStatus = !matchFull;
+            const response = await axios.post(
+                'http://192.168.237.220:8000/toggle-match-full',
+                {
+                    gameId,
+                    matchFull: newMatchFullStatus,
+                },
+            );
+        
+            if (response.status === 200) {
+                // Display a success message
+                Alert.alert('Success', `Match full status updated`);
+                setMatchFull(newMatchFullStatus);
+            }
         } catch (error) {
-          console.error('Failed to update match full status:', error);
-          Alert.alert('Error', 'Failed to update match full status');
+            console.error('Failed to update match full status:', error);
+            Alert.alert('Error', 'Failed to update match full status');
         }
-    };
-    console.log('MatchFull: ', route?.params?.item?.matchFull);
+      };
+    // console.log('MatchFull: ', route?.params?.item?.matchFull);
 
     useEffect(() => {
         fetchRequests();
@@ -126,7 +132,7 @@ const GameSetupScreen = () => {
         console.error('Failed to fetch players:', error);
     }
     };
-    console.log('players', players);
+    // console.log('players', players);
 
 
     useLayoutEffect(() => {
